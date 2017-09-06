@@ -96,6 +96,34 @@ namespace Tournament.Library.Data
                 SaveEnteredTeams(connection,t);
             }
         }
+        
+               private void SaveTournamentRounds(IDbConnection connction, Tournaments tournamnets)
+        {
+            foreach (var tournamnetsRound in tournamnets.Rounds)
+            {
+                foreach (var matchup in tournamnetsRound)
+                {
+                    var p = new DynamicParameters();
+                    p.Add("@tournamnetId");
+                    p.Add("@matchupRound");
+                    p.Add("@id",dbType:DbType.Int32,direction:ParameterDirection.Output);
+
+                    connction.Execute("dbo.spMatchups_Insert", p, commandType: CommandType.StoredProcedure);
+
+                    matchup.Id = p.Get<int>("@id");
+
+                    foreach (var entry in matchup.Entries)
+                    {
+                        //var p = new DynamicParameters();
+                        //p.Add("@tournamnetId");
+                        //p.Add("@matchupRound");
+                        //p.Add("@id", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                        //connction.Execute("dbo.spMatchups_Insert", p, commandType: CommandType.StoredProcedure);
+                    }
+                }
+            }
+        }
 
         private void SaveTournament(IDbConnection con, Tournaments t)
         {
